@@ -4,20 +4,26 @@ const authenticate = require("../middleware/auth");
 const authorizeAdmin = require("../middleware/authAdmin");
 
 const {
+  login,
   getMe,
-  updateMe,
   listUsers,
+  getUserByPolicy,
   createUser,
-  updateUserByAdmin,
-  deleteUserByAdmin,
 } = require("../controllers/userController");
 
-router.get("/me", authenticate(), getMe);
-router.patch("/me", authenticate(), updateMe);
+router.post("/login", login);
 
+// user
+router.get("/me", authenticate(), getMe);
+
+// admin only
 router.get("/", authenticate(), authorizeAdmin, listUsers);
 router.post("/", authenticate(), authorizeAdmin, createUser);
-router.patch("/:id", authenticate(), authorizeAdmin, updateUserByAdmin);
-router.delete("/:id", authenticate(), authorizeAdmin, deleteUserByAdmin);
+router.get(
+  "/policy/:no_policy",
+  authenticate(),
+  authorizeAdmin,
+  getUserByPolicy
+);
 
 module.exports = router;

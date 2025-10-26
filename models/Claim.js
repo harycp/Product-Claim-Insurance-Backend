@@ -24,6 +24,7 @@ const Claim = sequelize.define(
       allowNull: false,
       defaultValue: "pending",
     },
+    no_policy: { type: DataTypes.STRING, allowNull: false },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,

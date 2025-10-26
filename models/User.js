@@ -9,6 +9,12 @@ const User = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    no_policy: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: { notEmpty: true },
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,

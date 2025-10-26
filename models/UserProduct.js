@@ -17,6 +17,7 @@ const UserProduct = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
     },
+    no_policy: { type: DataTypes.STRING, allowNull: false },
     status: {
       type: DataTypes.ENUM("active", "inactive"),
       defaultValue: "active",
