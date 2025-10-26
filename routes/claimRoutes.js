@@ -8,13 +8,25 @@ const {
   updateStatus,
   getByCode,
 } = require("../controllers/claimController");
+const {
+  claimsListLimiter,
+  claimCreateLimiter,
+  claimStatusLimiter,
+  claimByCodeLimiter,
+} = require("../middleware/rateLimiters");
 
-router.get("/", authenticate(), list);
+router.get("/", claimsListLimiter, authenticate(), list);
 
-router.post("/", authenticate(), create);
+router.post("/", claimCreateLimiter, authenticate(), create);
 
-router.patch("/:id/status", authenticate(), authorizeAdmin, updateStatus);
+router.patch(
+  "/:id/status",
+  claimStatusLimiter,
+  authenticate(),
+  authorizeAdmin,
+  updateStatus
+);
 
-router.get("/code/:code", authenticate(), getByCode);
+router.get("/code/:code", claimStatusLimiter, authenticate(), getByCode);
 
 module.exports = router;
