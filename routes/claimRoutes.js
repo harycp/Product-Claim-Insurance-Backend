@@ -8,10 +8,23 @@ const {
   updateStatus,
 } = require("../controllers/claimController");
 
-router.get("/", authenticate(), list);
+const {
+  claimsListLimiter,
+  claimCreateLimiter,
+  claimStatusLimiter,
+  claimByCodeLimiter,
+} = require("../middleware/rateLimitersMemory");
 
-router.post("/", authenticate(), create);
+router.get("/", claimsListLimiter, authenticate(), list);
 
-router.patch("/:id/status", authenticate(), authorizeAdmin, updateStatus);
+router.post("/", claimCreateLimiter, authenticate(), create);
+
+router.patch(
+  "/:id/status",
+  claimStatusLimiter,
+  authenticate(),
+  authorizeAdmin,
+  updateStatus
+);
 
 module.exports = router;
