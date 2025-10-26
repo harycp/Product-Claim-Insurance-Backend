@@ -1,6 +1,6 @@
 const { verifyToken } = require("../utils/jwt");
 
-function authenticate(required = true) {
+const authenticate = (required = true) => {
   return (req, res, next) => {
     try {
       const authHeader = req.headers["authorization"] || "";
@@ -26,6 +26,6 @@ function authenticate(required = true) {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
-}
+};
 
 module.exports = authenticate;
