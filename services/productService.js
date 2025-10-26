@@ -1,10 +1,18 @@
 const { Product, UserProduct, User } = require("../models");
+const cache = require("./cacheService");
+
+const PRODUCTS_LIST_KEY = "products:list";
+const PRODUCTS_TTL = parseInt(process.env.REDIS_TTL_PRODUCTS || "120", 10);
 
 const listProducts = async () => {
-  const products = await Product.findAll({
-    order: [["createdAt", "DESC"]],
-  });
-  return products;
+  const cached = await cache.get(PRODUCTS_LIST_KEY);
+  if (cached) return { fromCache: true, data: cached };
+
+  const products = await Product.findAll({ order: [["createdAt", "DESC"]] });
+
+  await cache.set(PRODUCTS_LIST_KEY, products, PRODUCTS_TTL);
+
+  return { fromCache: false, data: products };
 };
 
 const createProduct = async ({
@@ -22,6 +30,8 @@ const createProduct = async ({
     premium_amount: premium_amount || 0,
     max_claim_amount: max_claim_amount || 0,
   });
+
+  await cache.del(PRODUCTS_LIST_KEY);
 
   return product;
 };

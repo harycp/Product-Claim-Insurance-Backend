@@ -2,8 +2,8 @@ const claimService = require("../services/claimService");
 
 const list = async (req, res) => {
   try {
-    const claims = await claimService.listClaims(req.user);
-    return res.json(claims);
+    const result = await claimService.listClaims(req.user);
+    return res.json(result);
   } catch {
     return res.status(500).json({ message: "Internal Server Error" });
   }
@@ -18,7 +18,6 @@ const create = async (req, res) => {
       reason,
       amount,
     });
-
     if (result.error) return res.status(400).json({ message: result.error });
     return res.status(201).json(result);
   } catch {
@@ -30,9 +29,27 @@ const updateStatus = async (req, res) => {
   try {
     const claimId = req.params.id;
     const { status } = req.body;
-
     const result = await claimService.updateClaimStatus({ claimId, status });
     if (result.error) return res.status(400).json({ message: result.error });
+    return res.json(result);
+  } catch {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const getByCode = async (req, res) => {
+  try {
+    const code = req.params.code;
+    const result = await claimService.getClaimByCode({ code });
+    if (result?.error) return res.status(404).json({ message: result.error });
+
+    const claim = result.data;
+
+    const isAdmin = !!req.user?.is_admin;
+    const isOwner = claim?.no_policy && req.user?.no_policy === claim.no_policy;
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
 
     return res.json(result);
   } catch {
@@ -40,4 +57,4 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = { list, create, updateStatus };
+module.exports = { list, create, updateStatus, getByCode };

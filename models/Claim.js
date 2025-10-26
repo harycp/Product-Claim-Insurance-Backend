@@ -11,6 +11,11 @@ const Claim = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    claim_code: {
+      type: DataTypes.STRING(32),
+      allowNull: false,
+      unique: true,
+    },
     reason: {
       type: DataTypes.STRING,
       allowNull: false,

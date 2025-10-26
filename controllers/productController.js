@@ -2,8 +2,8 @@ const productService = require("../services/productService");
 
 const list = async (req, res) => {
   try {
-    const data = await productService.listProducts();
-    return res.json(data);
+    const result = await productService.listProducts();
+    return res.json(result);
   } catch {
     return res.status(500).json({ message: "Internal Server Error" });
   }

@@ -6,6 +6,7 @@ const {
   list,
   create,
   updateStatus,
+  getByCode,
 } = require("../controllers/claimController");
 
 router.get("/", authenticate(), list);
@@ -13,5 +14,7 @@ router.get("/", authenticate(), list);
 router.post("/", authenticate(), create);
 
 router.patch("/:id/status", authenticate(), authorizeAdmin, updateStatus);
+
+router.get("/code/:code", authenticate(), getByCode);
 
 module.exports = router;
