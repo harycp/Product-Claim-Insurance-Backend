@@ -1,37 +1,49 @@
-const { Product, UserProduct } = require("../models");
+const { Product, UserProduct, User } = require("../models");
 
 const listProducts = async () => {
-  const data = await Product.findAll({ order: [["createdAt", "DESC"]] });
-  return data;
+  const products = await Product.findAll({
+    order: [["createdAt", "DESC"]],
+  });
+  return products;
 };
 
 const createProduct = async ({
   name,
   description,
-  premium_amount = 0,
-  max_claim_amount = 0,
+  premium_amount,
+  max_claim_amount,
 }) => {
+  if (!name || !description)
+    return { error: "name and description are required" };
+
   const product = await Product.create({
     name,
     description,
-    premium_amount,
-    max_claim_amount,
+    premium_amount: premium_amount || 0,
+    max_claim_amount: max_claim_amount || 0,
   });
+
   return product;
 };
 
 const buyProduct = async ({ userId, productId }) => {
-  const product = await Product.findByPk(productId);
+  const [user, product] = await Promise.all([
+    User.findByPk(userId),
+    Product.findByPk(productId),
+  ]);
+
+  if (!user) return { error: "User not found" };
   if (!product) return { error: "Product not found" };
 
-  const up = await UserProduct.create({
-    user_id: userId,
-    product_id: productId,
+  const ownership = await UserProduct.create({
+    user_id: user.id,
+    product_id: product.id,
+    no_policy: user.no_policy,
     status: "active",
     purchased_at: new Date(),
   });
 
-  return { userProduct: up };
+  return { message: "Product purchased successfully", ownership };
 };
 
 module.exports = { listProducts, createProduct, buyProduct };
