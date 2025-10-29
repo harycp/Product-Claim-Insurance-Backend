@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const authenticate = require("../middleware/authenticate");
-const authorizeAdmin = require("../middleware/authorizeAdmin");
+const authenticate = require("../middleware/auth");
+const authorizeAdmin = require("../middleware/authAdmin");
 const { list, create, buy } = require("../controllers/productController");
+
 const {
   productsListLimiter,
   productCreateLimiter,

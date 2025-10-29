@@ -2,7 +2,7 @@ const userService = require("../services/userService");
 
 const login = async (req, res) => {
   try {
-    const result = await authService.login(req.body);
+    const result = await userService.login(req.body);
     if (result.error) {
       const status =
         result.error === "User not found"
@@ -36,7 +36,7 @@ const getMe = async (req, res) => {
 const getUserByPolicy = async (req, res) => {
   try {
     const { no_policy } = req.params;
-    const data = await userService.getUserWithRelationsByPolicy(no_policy);
+    const data = await userService.getUserWithNoPolicy(no_policy);
     if (!data) return res.status(404).json({ message: "User not found" });
     return res.json(data);
   } catch {

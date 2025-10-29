@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const authenticate = require("../middleware/authenticate");
-const authorizeAdmin = require("../middleware/authorizeAdmin");
+const authenticate = require("../middleware/auth");
+const authorizeAdmin = require("../middleware/authAdmin");
 const {
   list,
   create,
@@ -19,8 +19,8 @@ router.get("/", claimsListLimiter, authenticate(), list);
 
 router.post("/", claimCreateLimiter, authenticate(), create);
 
-router.patch(
-  "/:id/status",
+router.put(
+  "/:code/status",
   claimStatusLimiter,
   authenticate(),
   authorizeAdmin,

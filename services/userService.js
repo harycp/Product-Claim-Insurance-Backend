@@ -2,6 +2,12 @@ const bcrypt = require("bcryptjs");
 const { User, Product, Claim } = require("../models");
 const { generateToken } = require("../utils/jwt");
 
+const generatePolicyNumber = () => {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const random = Math.floor(1000 + Math.random() * 9000);
+  return `POL-${date}-${random}`;
+};
+
 const login = async ({ email, password }) => {
   if (!email || !password) {
     return { error: "Email and password are required" };
@@ -187,25 +193,33 @@ const createUser = async ({
   is_admin = false,
   no_policy,
 }) => {
-  if (!email || !name || !password || !no_policy)
-    return { error: "email, name, password, and no_policy are required" };
+  try {
+    if (!email || !name || !password)
+      return { error: "email, name, and password are required" };
 
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({
-    email,
-    name,
-    password: hashed,
-    is_admin,
-    no_policy,
-  });
+    const hashed = await bcrypt.hash(password, 10);
 
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    no_policy: user.no_policy,
-    is_admin: user.is_admin,
-  };
+    const policy = no_policy || generatePolicyNumber();
+
+    const user = await User.create({
+      email,
+      name,
+      password: hashed,
+      is_admin,
+      no_policy: policy,
+    });
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      no_policy: user.no_policy,
+      is_admin: user.is_admin,
+    };
+  } catch (err) {
+    console.error("Error creating user:", err);
+    return { error: "Internal error creating user" };
+  }
 };
 
 const listUsers = async () => {

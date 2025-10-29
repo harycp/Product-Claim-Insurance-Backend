@@ -27,9 +27,9 @@ const create = async (req, res) => {
 
 const updateStatus = async (req, res) => {
   try {
-    const claimId = req.params.id;
+    const claimCode = req.params.code;
     const { status } = req.body;
-    const result = await claimService.updateClaimStatus({ claimId, status });
+    const result = await claimService.updateClaimStatus({ claimCode, status });
     if (result.error) return res.status(400).json({ message: result.error });
     return res.json(result);
   } catch {

@@ -8,6 +8,7 @@ const CLAIM_BY_CODE_TTL = parseInt(
   process.env.REDIS_TTL_CLAIM_CODE || "60",
   10
 );
+const CLAIMS_STATS_KEY = "claims:stats";
 
 const userClaimsKey = (noPolicy) => `claims:list:user:${noPolicy}`;
 const claimByCodeKey = (code) => `claim:code:${code}`;
@@ -87,11 +88,13 @@ const createClaim = async ({ user, product_id, reason, amount }) => {
   return claim;
 };
 
-const updateClaimStatus = async ({ claimId, status }) => {
+const updateClaimStatus = async ({ claimCode, status }) => {
+  const claim_code = claimCode;
   const validStatuses = ["approved", "rejected"];
   if (!validStatuses.includes(status)) return { error: "Invalid status" };
 
-  const claim = await Claim.findByPk(claimId);
+  const claim = await Claim.findOne({ where: { claim_code } });
+
   if (!claim) return { error: "Claim not found" };
 
   claim.status = status;

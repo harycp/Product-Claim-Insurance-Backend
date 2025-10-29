@@ -25,6 +25,7 @@ const UserProduct = sequelize.define(
     },
     purchased_at: {
       type: DataTypes.DATE,
+      paranoid: true,
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },

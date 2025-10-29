@@ -45,6 +45,12 @@ const buyProduct = async ({ userId, productId }) => {
   if (!user) return { error: "User not found" };
   if (!product) return { error: "Product not found" };
 
+  // jika user sudah punya product itu, maka error juga
+  const alreadyOwns = await UserProduct.findOne({
+    where: { user_id: user.id, product_id: product.id, status: "active" },
+  });
+  if (alreadyOwns) return { error: "User already owns this product" };
+
   const ownership = await UserProduct.create({
     user_id: user.id,
     product_id: product.id,
