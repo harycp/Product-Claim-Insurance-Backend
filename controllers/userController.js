@@ -27,7 +27,11 @@ const getMe = async (req, res) => {
   try {
     const data = await userService.getUserWithRelationsById(req.user.id);
     if (!data) return res.status(404).json({ message: "User not found" });
-    return res.json(data);
+    return res.json({
+      status: 200,
+      message: "User found",
+      data: data,
+    });
   } catch {
     return res.status(500).json({ message: "Internal Server Error" });
   }
@@ -38,7 +42,11 @@ const getUserByPolicy = async (req, res) => {
     const { no_policy } = req.params;
     const data = await userService.getUserWithNoPolicy(no_policy);
     if (!data) return res.status(404).json({ message: "User not found" });
-    return res.json(data);
+    return res.json({
+      status: 200,
+      message: "User found",
+      data: data,
+    });
   } catch {
     return res.status(500).json({ message: "Internal Server Error" });
   }
@@ -48,7 +56,10 @@ const createUser = async (req, res) => {
   try {
     const result = await userService.createUser(req.body);
     if (result.error) return res.status(400).json({ message: result.error });
-    return res.status(201).json(result);
+    return res.status(201).json({
+      message: "User created successfully",
+      data: result,
+    });
   } catch {
     return res.status(500).json({ message: "Internal Server Error" });
   }
@@ -57,7 +68,11 @@ const createUser = async (req, res) => {
 const listUsers = async (req, res) => {
   try {
     const data = await userService.listUsers();
-    return res.json(data);
+    return res.json({
+      status: 200,
+      message: "Users found",
+      data: data,
+    });
   } catch {
     return res.status(500).json({ message: "Internal Server Error" });
   }
