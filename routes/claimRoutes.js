@@ -20,11 +20,13 @@ router.get("/", claimsListLimiter, authenticate(), list);
 router.post("/", claimCreateLimiter, authenticate(), create);
 
 router.patch(
-  "/:id/status",
+  "/:code/status",
   claimStatusLimiter,
   authenticate(),
   authorizeAdmin,
   updateStatus
 );
+
+
 
 module.exports = router;

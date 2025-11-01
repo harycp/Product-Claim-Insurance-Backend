@@ -43,11 +43,11 @@ const createClaim = async ({ user, product_id, reason, amount }) => {
   return claim;
 };
 
-const updateClaimStatus = async ({ claimId, status }) => {
+const updateClaimStatus = async ({ claimCode, status }) => {
   const validStatuses = ["approved", "rejected"];
   if (!validStatuses.includes(status)) return { error: "Invalid status" };
 
-  const claim = await Claim.findByPk(claimId);
+  const claim = await Claim.findByPk(claimCode);
   if (!claim) return { error: "Claim not found" };
 
   claim.status = status;
@@ -56,4 +56,24 @@ const updateClaimStatus = async ({ claimId, status }) => {
   return claim;
 };
 
-module.exports = { listClaims, createClaim, updateClaimStatus };
+const getClaimByCode = async ({ code }) => {
+  const claim = Claim.findOne({
+    where: { claim_code: code },
+    include: [
+      {
+        model: Product,
+        attributes: ["id", "name", "max_claim_amount"],
+      },
+      {
+        model: User,
+        attributes: ["id", "name", "email", "no_policy"],
+      },
+    ],
+  });
+
+  if (!claim) return { error: "Claim not found" };
+
+  return claim;
+};
+
+module.exports = { listClaims, createClaim, updateClaimStatus, getClaimByCode };
